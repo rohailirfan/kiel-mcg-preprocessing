@@ -2,6 +2,44 @@
 
 A small Python/Jupyter reproduction of the Kiel Cardio Database's documented MCG preprocessing, using **one real raw/processed pair: subject 1, trial 01**. The notebook has saved outputs and five comparison figures. It implements the stated preprocessing stages, but **does not reproduce the original output exactly** because important acquisition and filter settings are unspecified.
 
+## Understanding the reproduction
+
+### Purpose
+
+Magnetocardiography (MCG) records the very weak magnetic fields associated with the heart's electrical activity. A recording can also contain slow baseline changes, electrical mains interference, and other unwanted components. Preprocessing changes the signal to reduce selected frequency components before further analysis. Filtering can also affect useful cardiac information, so a smoother-looking trace is not automatically more accurate.
+
+This project turns the Kiel Cardio Database's published preprocessing description into a runnable Python workflow, then measures how closely its output agrees with the supplied processed recording. A **reproduction** here means independently implementing the documented method and checking the result against the authors' output.
+
+### The three signals being compared
+
+Only two recordings are downloaded. The third signal is calculated from the raw recording:
+
+| Signal | Role in the experiment |
+|---|---|
+| **Raw recording** | The original sensor-voltage recording, before the documented preprocessing. |
+| **Reproduced signal** | This project's output after converting units, applying the assumed filter implementation, and resampling. |
+| **Supplied processed signal** | The authors' processed version of the same subject and trial, used as the comparison reference. |
+
+The supplied version provides a reference for comparing processing outputs. Agreement with it does not establish that either output accurately represents the underlying cardiac activity.
+
+### How the workflow works
+
+1. **Verify the recording pair.** Check file checksums, subject/trial identifiers, channel order, units, and the conversion from stored integers into physical values.
+2. **Establish a usable measurement scale and clock.** Convert raw volts into picotesla (pT), a unit of magnetic field, using an explicitly assumed sensor sensitivity. Inspect the sampling information before treating corresponding samples as the same moment.
+3. **Apply the documented filtering stages to the full-length raw signals.** A 1 Hz high-pass attenuates slow baseline drift, a 100 Hz low-pass attenuates higher-frequency content, and a band-stop around 50 Hz reduces mains-band interference. The source gives these nominal frequencies; this implementation makes explicit choices about filter design and phase handling.
+4. **Match the comparison conditions.** Resample to the supplied signal's rate, check for a timing offset, and compare the same channel and time window. Exclude five seconds at each boundary from scoring because filtering can create artificial changes near the ends of a recording.
+5. **Inspect and measure the differences.** Plot the waveforms and their frequency spectra, quantify power around 50 Hz, and calculate correlation and root mean square error (RMSE).
+
+Two assumptions are especially important. Both headers state 200 Hz, but the raw recording contains exactly 256 times as many samples. This project therefore assumes a raw rate of **51,200 Hz**, making both durations 69.82 seconds, before resampling to 200 Hz. It also assumes the manufacturer's default sensitivity of **2.7 V/nT**. Neither value is confirmed by the recording's acquisition metadata; both affect how the results should be interpreted. The full choices and supporting checks appear in [Method and assumptions](#method-and-assumptions).
+
+### What the results mean
+
+For channel 0, the reproduced and supplied signals have **correlation 0.76104** and **RMSE 1.47604 pT** over the interior interval of 5.00–64.82 seconds. Correlation measures how the traces vary together; RMSE measures the size of their sample-by-sample differences in picotesla. All eight channels have an estimated timing offset of zero samples.
+
+The cardiac feature timing agrees, and both processing outputs strongly suppress the 50 Hz band. However, the reproduced output retains substantially more energy near 100 Hz, so the match remains incomplete. Missing original filter and resampling details could explain this difference, but the exact cause has not been established. The filter settings were not adjusted to maximize the agreement scores.
+
+The main outcome is a transparent, repeatable preprocessing experiment with measured results and visible limitations. It shows which parts of the published method can be implemented from the available information and which require more detail from the authors. Because this study uses one healthy volunteer's trial, it does not establish clinical accuracy, detect ischemia, predict heart attacks, or validate a wearable.
+
 ## Start here
 
 - `replicate_v1.ipynb`: self-contained analysis, explanations, code and saved outputs.
