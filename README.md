@@ -43,6 +43,7 @@ The main outcome is a transparent, repeatable preprocessing experiment with meas
 ## Start here
 
 - `replicate_v1.ipynb`: self-contained analysis, explanations, code and saved outputs.
+- [Technical write-up](TECHNICAL_WRITEUP.md) and [PDF report](Kiel-MCG-Technical-Writeup.pdf): methods, verification, figures, results and limitations.
 - `requirements.txt`: pinned analysis and notebook dependencies.
 - `figures/`: five PNG plots, including raw, comparison, alignment, filter/edge and spectrum views.
 - `data/`: exactly four original WFDB files: `.hea` and `.dat` for the selected raw and supplied processed recording.
