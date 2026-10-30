@@ -5,3 +5,4 @@ metadata/** -text
 *.ipynb text eol=lf
 *.csv -text
 LICENSE.txt -text
+*.pdf binary
