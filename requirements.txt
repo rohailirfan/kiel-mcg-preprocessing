@@ -1,0 +1,11 @@
+# Analysis dependencies; pandas is pinned for WFDB 4.3.0 compatibility.
+numpy==2.2.6
+scipy==1.15.3
+matplotlib==3.10.3
+wfdb==4.3.0
+pandas==2.2.3
+# Notebook editing and reproducible execution (not needed in Colab).
+jupyterlab==4.4.3
+nbformat==5.10.4
+nbclient==0.10.2
+ipykernel==6.29.5

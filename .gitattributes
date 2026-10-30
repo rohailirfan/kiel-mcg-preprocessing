@@ -1,0 +1,7 @@
+* text=auto eol=lf
+data/** -text
+metadata/** -text
+*.png binary
+*.ipynb text eol=lf
+*.csv -text
+LICENSE.txt -text
